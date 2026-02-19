@@ -1368,6 +1368,33 @@ body {
   animation: fadeIn 0.3s ease;
 }
 
+.flying-lobster {
+  position: fixed;
+  z-index: 1001;
+  pointer-events: none;
+  animation: lobsterFly linear infinite;
+  opacity: 0;
+}
+
+@keyframes lobsterFly {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  5% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    translate:
+      calc(var(--end-x) - var(--start-x))
+      calc(var(--end-y) - var(--start-y));
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1446,10 +1473,12 @@ body {
 }
 
 .modal-hint {
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: 13px;
+  color: var(--accent);
   margin-bottom: 24px;
   font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .modal-button {
