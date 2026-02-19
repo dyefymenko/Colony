@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 5 npx tsx:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs:*)",
+      "Bash(chmod:*)",
+      "WebFetch(domain:docs.gokite.ai)",
+      "WebFetch(domain:kite.foundation)",
+      "WebFetch(domain:faucet.gokite.ai)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.x402.org)",
+      "WebFetch(domain:docs.x402.org)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api:*)",
+      "WebSearch",
+      "WebFetch(domain:webcache.googleusercontent.com)",
+      "WebFetch(domain:www.npmjs.com)"
+    ]
+  }
+}

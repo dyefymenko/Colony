@@ -1,0 +1,21 @@
+{
+  "name": "agenthire-mock-services",
+  "version": "1.0.0",
+  "description": "Mock x402 external services for AgentHire demo",
+  "scripts": {
+    "proxy-api": "tsx proxy-api.ts",
+    "llm-api": "tsx llm-api.ts",
+    "data-feed": "tsx data-feed.ts",
+    "all": "concurrently \"npm run proxy-api\" \"npm run llm-api\" \"npm run data-feed\""
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.12.0",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

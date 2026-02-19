@@ -1,0 +1,573 @@
+/* ─── AgentHire Dashboard — Dark Theme ────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0a0e17;
+  --card: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --cyan: #22d3ee;
+  --pink: #f472b6;
+  --purple: #a78bfa;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --orange: #fb923c;
+  --blue: #38bdf8;
+  --red: #ef4444;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.autonomous-badge {
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--cyan);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.live-indicator.connected { color: var(--green); }
+.live-indicator.disconnected { color: var(--red); }
+
+.live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.connected .live-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hcs-id {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ─── Metrics Row ────────────────────────────────────────────────────────── */
+
+.metrics-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.metric {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+/* ─── Columns ────────────────────────────────────────────────────────────── */
+
+.columns {
+  display: grid;
+  grid-template-columns: 300px 1fr 360px;
+  gap: 16px;
+  height: calc(100vh - 170px);
+}
+
+.column-left,
+.column-center,
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.column-left::-webkit-scrollbar,
+.column-center::-webkit-scrollbar,
+.column-right::-webkit-scrollbar {
+  width: 4px;
+}
+
+.column-left::-webkit-scrollbar-thumb,
+.column-center::-webkit-scrollbar-thumb,
+.column-right::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* ─── Panels (shared) ────────────────────────────────────────────────────── */
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.empty {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+  padding: 24px;
+}
+
+/* ─── Agent Roster ───────────────────────────────────────────────────────── */
+
+.agent-roster {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.agent-card {
+  padding: 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+}
+
+.agent-card:last-child { margin-bottom: 0; }
+
+.agent-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.agent-emoji { font-size: 24px; }
+
+.agent-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.agent-role {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.status-badge {
+  margin-left: auto;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  color: #000;
+}
+
+.agent-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stat-value.token { color: var(--yellow); }
+.stat-value.staked { color: var(--orange); }
+.stat-value.rep { color: var(--green); }
+
+.kite-wallet {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.kite-wallet-label {
+  color: var(--blue);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kite-wallet-address {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.kite-wallet-address:hover {
+  color: var(--blue);
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.skill-tag {
+  padding: 2px 7px;
+  font-size: 10px;
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--purple);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 4px;
+}
+
+/* ─── Job Marketplace ────────────────────────────────────────────────────── */
+
+.job-marketplace {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+  flex: 1;
+}
+
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.job-row {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+}
+
+.job-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.job-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  min-width: 90px;
+}
+
+.job-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.job-bounty {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow);
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.expense-badge {
+  color: var(--blue) !important;
+  font-weight: 500;
+}
+
+.job-tx {
+  margin-top: 6px;
+}
+
+.job-tx a {
+  font-size: 11px;
+  color: var(--cyan);
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+.job-tx a:hover { opacity: 1; }
+
+/* ─── Token Flow ─────────────────────────────────────────────────────────── */
+
+.token-flow {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.token-flow-svg {
+  width: 100%;
+  max-height: 280px;
+}
+
+/* ─── Activity Feed ──────────────────────────────────────────────────────── */
+
+.activity-feed {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feed-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-left: 2px solid;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.feed-icon {
+  font-weight: 700;
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.feed-time {
+  color: var(--text-dim);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.feed-detail {
+  flex: 1;
+}
+
+/* ─── Hedera Attestations ────────────────────────────────────────────────── */
+
+.hedera-attestations {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.attestation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attestation-item {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+}
+
+.attestation-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.hcs-seq {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.attestation-action {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+.attestation-time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.attestation-detail {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.tx-link {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--cyan);
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+.tx-link:hover { opacity: 1; }
+
+/* ─── Kite x402 Payments ────────────────────────────────────────────────── */
+
+.kite-payments {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.kite-label {
+  color: var(--blue);
+}
+
+.payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.payment-item {
+  padding: 8px 10px;
+  background: rgba(56, 189, 248, 0.03);
+  border: 1px solid rgba(56, 189, 248, 0.1);
+  border-radius: 6px;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.payment-agent {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.payment-time {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.payment-detail {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.kite-tx {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--blue);
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.kite-tx:hover {
+  opacity: 1;
+}

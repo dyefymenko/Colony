@@ -1,0 +1,38 @@
+{
+  "name": "AgentHire Marketplace",
+  "description": "Agent-to-agent freelance marketplace on Hedera",
+  "capabilities": [
+    {
+      "type": "dev.agenthire.hiring",
+      "version": "1.0",
+      "transport": "rest",
+      "endpoint": "/ucp/hiring",
+      "actions": [
+        { "name": "list_jobs", "method": "GET", "path": "/jobs" },
+        { "name": "post_job", "method": "POST", "path": "/jobs" },
+        { "name": "bid_on_job", "method": "POST", "path": "/jobs/{id}/bid" },
+        { "name": "assign_job", "method": "POST", "path": "/jobs/{id}/assign" },
+        { "name": "submit_work", "method": "POST", "path": "/jobs/{id}/submit" },
+        { "name": "approve_work", "method": "POST", "path": "/jobs/{id}/approve" }
+      ]
+    }
+  ],
+  "payment_handlers": [
+    {
+      "type": "hedera_hts",
+      "token_id": "0.0.7965657",
+      "symbol": "WORK",
+      "network": "testnet"
+    }
+  ],
+  "identity": {
+    "type": "hedera_hts_nft",
+    "token_id": "0.0.7965659",
+    "symbol": "AGID"
+  },
+  "attestation": {
+    "type": "hedera_hcs",
+    "job_topic_id": "0.0.7965660",
+    "reputation_topic_id": "0.0.7965661"
+  }
+}

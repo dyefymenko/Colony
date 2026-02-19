@@ -1,0 +1,35 @@
+{
+  "operator": {
+    "address": "0xa37F7f844c8Cfb38F26b824a78fbb091ae87A143",
+    "privateKey": "0xa4c80d6a09f226c8312b6d6be1db171652931b9c18138876a79b649167c6571b",
+    "agentName": "operator"
+  },
+  "agents": {
+    "codex": {
+      "address": "0xD07D679C90E86fefBc838de49f52B2254b76Ca3D",
+      "privateKey": "0x0fd500e69724afe35baa6fda5994b74ea29354a6b8972c0260e4687a77b7c5ce",
+      "agentName": "Codex"
+    },
+    "sentry": {
+      "address": "0x94f30FDfc40c3C80d7e116fa372639fd8fce8666",
+      "privateKey": "0x954179ce8b6837022fa29c327d3fae935adffcab915ed1a2122c60b666cc86e2",
+      "agentName": "Sentry"
+    },
+    "scraper": {
+      "address": "0x5A48Fe04a3Cf38403dde1eA3A0C8063d576B13a6",
+      "privateKey": "0x0ca163d58eac0574f62f6a747cdc46fe54fb43d8e8d4e6ced9bbe33f1948cbc2",
+      "agentName": "Scraper"
+    },
+    "quill": {
+      "address": "0x7Dfd585aaA6c8aD4b21a3887A66BfF919E941E3b",
+      "privateKey": "0xea718c0035251d664b875ddd13f175371f7c9eeddfe7193be58f17d85072882d",
+      "agentName": "Quill"
+    },
+    "argus": {
+      "address": "0x0dBf39c23FBfFE0b56461A51Fb2bD139d96D5152",
+      "privateKey": "0x56db18e13252a82875ee07278a0780b826370c3cb93d1ed8556851ef7d4ef80b",
+      "agentName": "Argus"
+    }
+  },
+  "createdAt": "2026-02-18T23:15:20.984Z"
+}
