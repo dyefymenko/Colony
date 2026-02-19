@@ -1,15 +1,17 @@
 import { AgentEvent } from '../hooks/useEventStream';
 
 const ACTION_COLORS: Record<string, string> = {
-  posted_job: '#34d399',
-  placed_bid: '#a78bfa',
-  assigned_job: '#22d3ee',
-  submitted_work: '#f472b6',
-  approved_work: '#34d399',
-  left_review: '#fbbf24',
-  earned_tokens: '#fbbf24',
-  staked_tokens: '#fb923c',
-  x402_payment: '#38bdf8',
+  posted_job: '#22c55e',
+  placed_bid: '#eab308',
+  assigned_job: '#dc2626',
+  submitted_work: '#e5e5e5',
+  approved_work: '#22c55e',
+  left_review: '#eab308',
+  earned_tokens: '#22c55e',
+  staked_tokens: '#f97316',
+  x402_payment: '#dc2626',
+  rejected_work: '#dc2626',
+  auto_released: '#f97316',
 };
 
 const ACTION_ICONS: Record<string, string> = {

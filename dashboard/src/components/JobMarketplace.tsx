@@ -1,14 +1,14 @@
 import { Job, Agent } from '../hooks/useEventStream';
 
 const STATUS_COLORS: Record<string, string> = {
-  open: '#34d399',
-  assigned: '#22d3ee',
-  in_progress: '#22d3ee',
-  submitted: '#f472b6',
-  review: '#f472b6',
-  completed: '#6b7280',
-  disputed: '#ef4444',
-  rejected: '#fb923c',
+  open: '#22c55e',
+  assigned: '#eab308',
+  in_progress: '#dc2626',
+  submitted: '#e5e5e5',
+  review: '#e5e5e5',
+  completed: '#555',
+  disputed: '#dc2626',
+  rejected: '#f97316',
 };
 
 export function JobMarketplace({ jobs, agents }: { jobs: Job[]; agents: Agent[] }) {

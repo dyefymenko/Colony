@@ -68,7 +68,7 @@ export function TokenFlow({ agents, events }: { agents: Agent[]; events: AgentEv
               <line
                 x1={from.x} y1={from.y}
                 x2={to.x} y2={to.y}
-                stroke="#fbbf24"
+                stroke="#dc2626"
                 strokeWidth={Math.max(1, Math.min(4, edge.amount / 20))}
                 opacity={0.5}
                 markerEnd="url(#arrow)"
@@ -76,7 +76,7 @@ export function TokenFlow({ agents, events }: { agents: Agent[]; events: AgentEv
               <text
                 x={(from.x + to.x) / 2}
                 y={(from.y + to.y) / 2 - 5}
-                fill="#fbbf24"
+                fill="#e5e5e5"
                 fontSize="9"
                 textAnchor="middle"
               >
@@ -94,26 +94,26 @@ export function TokenFlow({ agents, events }: { agents: Agent[]; events: AgentEv
               cy={positions[i].y}
               r={20}
               fill="rgba(255,255,255,0.05)"
-              stroke={agent.status === 'working' ? '#22d3ee' : '#334155'}
+              stroke={agent.status === 'working' ? '#dc2626' : '#333'}
               strokeWidth={agent.status === 'working' ? 2 : 1}
             />
             <text
               x={positions[i].x}
               y={positions[i].y - 4}
-              fill="#e2e8f0"
+              fill="#e5e5e5"
               fontSize="10"
               textAnchor="middle"
-              fontFamily="JetBrains Mono"
+              fontFamily="Inter, sans-serif"
             >
               {agent.name}
             </text>
             <text
               x={positions[i].x}
               y={positions[i].y + 10}
-              fill="#fbbf24"
+              fill="#777"
               fontSize="8"
               textAnchor="middle"
-              fontFamily="JetBrains Mono"
+              fontFamily="JetBrains Mono, monospace"
             >
               {agent.tokenBalance}
             </text>
@@ -124,7 +124,7 @@ export function TokenFlow({ agents, events }: { agents: Agent[]; events: AgentEv
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="30" refY="5"
             markerWidth="4" markerHeight="4" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#fbbf24" />
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
           </marker>
         </defs>
       </svg>

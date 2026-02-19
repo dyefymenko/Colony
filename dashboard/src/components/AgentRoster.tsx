@@ -5,10 +5,10 @@ const AGENT_EMOJIS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  idle: '#6b7280',
-  working: '#22d3ee',
-  bidding: '#a78bfa',
-  posting: '#f472b6',
+  idle: '#555',
+  working: '#dc2626',
+  bidding: '#eab308',
+  posting: '#777',
 };
 
 export function AgentRoster({ agents }: { agents: Agent[] }) {

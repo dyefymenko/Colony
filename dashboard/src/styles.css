@@ -1,4 +1,4 @@
-/* ─── AgentHire Dashboard — Dark Theme ────────────────────────────────────── */
+/* ─── AgentHire Dashboard ──────────────────────────────────────────────────── */
 
 * {
   margin: 0;
@@ -7,33 +7,38 @@
 }
 
 :root {
-  --bg: #0a0e17;
-  --card: rgba(255, 255, 255, 0.03);
-  --card-border: rgba(255, 255, 255, 0.07);
-  --text: #e2e8f0;
-  --text-dim: #94a3b8;
-  --cyan: #22d3ee;
-  --pink: #f472b6;
-  --purple: #a78bfa;
-  --green: #34d399;
-  --yellow: #fbbf24;
-  --orange: #fb923c;
-  --blue: #38bdf8;
-  --red: #ef4444;
+  --bg: #0c0c0c;
+  --card: #141414;
+  --card-border: #222;
+  --card-hover: #1a1a1a;
+  --text: #e5e5e5;
+  --text-dim: #777;
+  --text-muted: #555;
+  --accent: #dc2626;
+  --accent-dim: rgba(220, 38, 38, 0.15);
+  --accent-border: rgba(220, 38, 38, 0.3);
+  --green: #22c55e;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --red: #dc2626;
+  --white: #fff;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app {
   min-height: 100vh;
   padding: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────── */
@@ -42,11 +47,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 14px 20px;
   margin-bottom: 16px;
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .header-left {
@@ -56,23 +61,21 @@ body {
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--cyan), var(--purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--white);
 }
 
 .autonomous-badge {
   padding: 3px 10px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 1px;
-  border-radius: 4px;
-  background: rgba(34, 211, 238, 0.1);
-  color: var(--cyan);
-  border: 1px solid rgba(34, 211, 238, 0.2);
+  letter-spacing: 1.5px;
+  border-radius: 3px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
 }
 
 .live-indicator {
@@ -87,8 +90,8 @@ body {
 .live-indicator.disconnected { color: var(--red); }
 
 .live-dot {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: currentColor;
 }
@@ -104,7 +107,8 @@ body {
 
 .hcs-id {
   font-size: 12px;
-  color: var(--text-dim);
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* ─── Metrics Row ────────────────────────────────────────────────────────── */
@@ -120,24 +124,24 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: 14px 12px;
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .metric-value {
   font-size: 22px;
   font-weight: 600;
-  color: var(--cyan);
+  color: var(--white);
 }
 
 .metric-label {
-  font-size: 11px;
-  color: var(--text-dim);
+  font-size: 10px;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 3px;
+  letter-spacing: 1px;
+  margin-top: 4px;
 }
 
 /* ─── Columns ────────────────────────────────────────────────────────────── */
@@ -161,31 +165,31 @@ body {
 .column-left::-webkit-scrollbar,
 .column-center::-webkit-scrollbar,
 .column-right::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 .column-left::-webkit-scrollbar-thumb,
 .column-center::-webkit-scrollbar-thumb,
 .column-right::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: #333;
   border-radius: 2px;
 }
 
 /* ─── Panels (shared) ────────────────────────────────────────────────────── */
 
 .panel-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--card-border);
 }
 
 .empty {
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-size: 13px;
   text-align: center;
   padding: 24px;
@@ -196,16 +200,16 @@ body {
 .agent-roster {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
 }
 
 .agent-card {
   padding: 12px;
-  margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.015);
+  margin-bottom: 8px;
+  background: var(--bg);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .agent-card:last-child { margin-bottom: 0; }
@@ -217,11 +221,12 @@ body {
   margin-bottom: 10px;
 }
 
-.agent-emoji { font-size: 24px; }
+.agent-emoji { font-size: 22px; }
 
 .agent-name {
   font-weight: 600;
   font-size: 15px;
+  color: var(--white);
 }
 
 .agent-role {
@@ -236,8 +241,8 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-radius: 4px;
-  color: #000;
+  border-radius: 3px;
+  color: var(--bg);
 }
 
 .agent-stats {
@@ -255,17 +260,18 @@ body {
 
 .stat-label {
   font-size: 10px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .stat-value {
   font-size: 14px;
   font-weight: 600;
+  color: var(--text);
 }
 
-.stat-value.token { color: var(--yellow); }
-.stat-value.staked { color: var(--orange); }
+.stat-value.token { color: var(--white); }
+.stat-value.staked { color: var(--text-dim); }
 .stat-value.rep { color: var(--green); }
 
 .kite-wallet {
@@ -277,20 +283,22 @@ body {
 }
 
 .kite-wallet-label {
-  color: var(--blue);
+  color: var(--accent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-size: 10px;
 }
 
 .kite-wallet-address {
-  color: var(--text-dim);
+  color: var(--text-muted);
   text-decoration: none;
   font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
 }
 
 .kite-wallet-address:hover {
-  color: var(--blue);
+  color: var(--text);
 }
 
 .skill-tags {
@@ -302,10 +310,10 @@ body {
 .skill-tag {
   padding: 2px 7px;
   font-size: 10px;
-  background: rgba(167, 139, 250, 0.1);
-  color: var(--purple);
-  border: 1px solid rgba(167, 139, 250, 0.2);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 3px;
 }
 
 /* ─── Job Marketplace ────────────────────────────────────────────────────── */
@@ -313,7 +321,7 @@ body {
 .job-marketplace {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
   flex: 1;
 }
@@ -321,14 +329,14 @@ body {
 .job-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .job-row {
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--bg);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .job-main {
@@ -349,12 +357,13 @@ body {
   flex: 1;
   font-size: 14px;
   font-weight: 500;
+  color: var(--text);
 }
 
 .job-bounty {
   font-size: 14px;
   font-weight: 600;
-  color: var(--yellow);
+  color: var(--white);
 }
 
 .job-meta {
@@ -366,7 +375,7 @@ body {
 }
 
 .expense-badge {
-  color: var(--blue) !important;
+  color: var(--accent) !important;
   font-weight: 500;
 }
 
@@ -376,19 +385,19 @@ body {
 
 .job-tx a {
   font-size: 11px;
-  color: var(--cyan);
+  color: var(--text-muted);
   text-decoration: none;
-  opacity: 0.7;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.job-tx a:hover { opacity: 1; }
+.job-tx a:hover { color: var(--text); }
 
 /* ─── Token Flow ─────────────────────────────────────────────────────────── */
 
 .token-flow {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
 }
 
@@ -402,7 +411,7 @@ body {
 .activity-feed {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
   flex: 1;
   min-height: 0;
@@ -412,7 +421,7 @@ body {
 .feed-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .feed-item {
@@ -434,13 +443,15 @@ body {
 }
 
 .feed-time {
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-size: 12px;
   flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .feed-detail {
   flex: 1;
+  color: var(--text-dim);
 }
 
 /* ─── Hedera Attestations ────────────────────────────────────────────────── */
@@ -448,19 +459,19 @@ body {
 .hedera-attestations {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
 }
 
 .attestation-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .attestation-item {
   padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--bg);
   border: 1px solid var(--card-border);
   border-radius: 6px;
 }
@@ -475,23 +486,25 @@ body {
 .hcs-seq {
   font-size: 11px;
   font-weight: 600;
-  color: var(--cyan);
-  background: rgba(34, 211, 238, 0.1);
+  color: var(--accent);
+  background: var(--accent-dim);
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .attestation-action {
   font-size: 11px;
   font-weight: 500;
-  color: var(--green);
+  color: var(--text-dim);
   text-transform: uppercase;
 }
 
 .attestation-time {
   margin-left: auto;
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .attestation-detail {
@@ -503,36 +516,36 @@ body {
   display: inline-block;
   margin-top: 3px;
   font-size: 11px;
-  color: var(--cyan);
+  color: var(--text-muted);
   text-decoration: none;
-  opacity: 0.7;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.tx-link:hover { opacity: 1; }
+.tx-link:hover { color: var(--text); }
 
 /* ─── Kite x402 Payments ────────────────────────────────────────────────── */
 
 .kite-payments {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 16px;
 }
 
 .kite-label {
-  color: var(--blue);
+  color: var(--accent);
 }
 
 .payment-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .payment-item {
   padding: 8px 10px;
-  background: rgba(56, 189, 248, 0.03);
-  border: 1px solid rgba(56, 189, 248, 0.1);
+  background: var(--bg);
+  border: 1px solid var(--card-border);
   border-radius: 6px;
 }
 
@@ -546,12 +559,13 @@ body {
 .payment-agent {
   font-size: 13px;
   font-weight: 600;
-  color: var(--blue);
+  color: var(--text);
 }
 
 .payment-time {
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .payment-detail {
@@ -563,11 +577,11 @@ body {
   display: inline-block;
   margin-top: 4px;
   font-size: 10px;
-  color: var(--blue);
+  color: var(--text-muted);
   text-decoration: none;
-  opacity: 0.6;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .kite-tx:hover {
-  opacity: 1;
+  color: var(--text);
 }
