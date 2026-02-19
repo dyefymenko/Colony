@@ -5,18 +5,18 @@ const AGENT_EMOJIS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  idle: '#555',
+  idle: '#666',
   working: '#dc2626',
   bidding: '#eab308',
-  posting: '#777',
+  posting: '#a78bfa',
 };
 
-export function AgentRoster({ agents }: { agents: Agent[] }) {
+export function AgentRoster({ agents, onSelectAgent }: { agents: Agent[]; onSelectAgent?: (id: string) => void }) {
   return (
     <div className="agent-roster">
       <h2 className="panel-title">Agent Roster</h2>
       {agents.map((agent) => (
-        <div key={agent.id} className="agent-card">
+        <div key={agent.id} className="agent-card" onClick={() => onSelectAgent?.(agent.id)} style={{ cursor: 'pointer' }}>
           <div className="agent-header">
             <span className="agent-emoji">{AGENT_EMOJIS[agent.name] || '🤖'}</span>
             <div>

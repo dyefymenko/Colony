@@ -1,31 +1,83 @@
+import { useState } from 'react';
 import { Job, Agent } from '../hooks/useEventStream';
 
 const STATUS_COLORS: Record<string, string> = {
-  open: '#22c55e',
-  assigned: '#eab308',
-  in_progress: '#dc2626',
-  submitted: '#e5e5e5',
-  review: '#e5e5e5',
-  completed: '#555',
-  disputed: '#dc2626',
-  rejected: '#f97316',
+  open: '#a0a0a0',
+  assigned: '#f59e0b',
+  in_progress: '#f59e0b',
+  submitted: '#f59e0b',
+  review: '#f59e0b',
+  completed: '#22c55e',
+  disputed: '#ef4444',
+  rejected: '#ef4444',
 };
 
-export function JobMarketplace({ jobs, agents }: { jobs: Job[]; agents: Agent[] }) {
+const FILTER_TABS: { label: string; statuses: string[] }[] = [
+  { label: 'All', statuses: [] },
+  { label: 'Open', statuses: ['open'] },
+  { label: 'In Progress', statuses: ['assigned', 'in_progress', 'submitted', 'review'] },
+  { label: 'Completed', statuses: ['completed'] },
+  { label: 'Rejected', statuses: ['rejected', 'disputed'] },
+];
+
+export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; agents: Agent[]; onSelectJob?: (id: string) => void }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Set<number>>(new Set());
   const agentMap = new Map(agents.map((a) => [a.id, a]));
   const getAgentName = (id?: string) => (id ? agentMap.get(id)?.name || id : '—');
 
-  const sorted = [...jobs].sort((a, b) => {
-    const order = ['open', 'in_progress', 'assigned', 'submitted', 'review', 'completed'];
+  const toggleFilter = (idx: number) => {
+    if (idx === 0) {
+      setActiveFilters(new Set());
+      return;
+    }
+    const next = new Set(activeFilters);
+    if (next.has(idx)) {
+      next.delete(idx);
+    } else {
+      next.add(idx);
+    }
+    setActiveFilters(next);
+  };
+
+  const allowedStatuses = activeFilters.size === 0
+    ? null
+    : Array.from(activeFilters).flatMap((i) => FILTER_TABS[i].statuses);
+
+  const filtered = allowedStatuses
+    ? jobs.filter((j) => allowedStatuses.includes(j.status))
+    : jobs;
+
+  const sorted = [...filtered].sort((a, b) => {
+    const order = ['open', 'in_progress', 'assigned', 'submitted', 'review', 'completed', 'rejected'];
     return order.indexOf(a.status) - order.indexOf(b.status);
   });
 
   return (
-    <div className="job-marketplace">
-      <h2 className="panel-title">Job Marketplace</h2>
+    <div className={`job-marketplace ${collapsed ? 'collapsed' : ''}`}>
+      <div className="panel-header" onClick={() => setCollapsed(!collapsed)}>
+        <h2 className="panel-title">Job Marketplace</h2>
+        <span className={`collapse-toggle ${collapsed ? 'collapsed' : ''}`}>&#x25BE;</span>
+      </div>
+      {!collapsed && <><div className="job-filters">
+        {FILTER_TABS.map((tab, i) => (
+          <button
+            key={tab.label}
+            className={`job-filter-tab ${(i === 0 && activeFilters.size === 0) || activeFilters.has(i) ? 'active' : ''}`}
+            onClick={() => toggleFilter(i)}
+          >
+            {tab.label}
+            {i > 0 && (
+              <span className="job-filter-count">
+                {jobs.filter((j) => tab.statuses.includes(j.status)).length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
       <div className="job-list">
         {sorted.map((job) => (
-          <div key={job.id} className="job-row">
+          <div key={job.id} className="job-row" onClick={() => onSelectJob?.(job.id)} style={{ cursor: 'pointer' }}>
             <div className="job-main">
               <span
                 className="job-status"
@@ -62,8 +114,8 @@ export function JobMarketplace({ jobs, agents }: { jobs: Job[]; agents: Agent[] 
             )}
           </div>
         ))}
-        {jobs.length === 0 && <div className="empty">No jobs posted yet</div>}
-      </div>
+        {sorted.length === 0 && <div className="empty">No jobs posted yet</div>}
+      </div></>}
     </div>
   );
 }

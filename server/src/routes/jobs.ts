@@ -520,7 +520,7 @@ router.post('/:id/reject', async (req: Request, res: Response) => {
       agentId: job.assigneeId!,
       agentName: worker.name,
       action: 'earned_tokens',
-      detail: `${worker.name} received ${splitResult.workerAmount} WORK kill fee for "${job.title}" (rejected)`,
+      detail: `${worker.name} received ${splitResult.workerAmount} WORK kill fee for "${job.title}"`,
       jobId: job.id,
       txHash: splitResult.workerTxHash,
     });

@@ -25,8 +25,9 @@ export function HederaAttestations({ events }: { events: AgentEvent[] }) {
                 href={`https://hashscan.io/testnet/transaction/${event.txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={event.txHash}
               >
-                {event.txHash.slice(0, 24)}...
+                View on HashScan
               </a>
             )}
           </div>
