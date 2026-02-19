@@ -23,6 +23,7 @@ const FILTER_TABS: { label: string; statuses: string[] }[] = [
 export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; agents: Agent[]; onSelectJob?: (id: string) => void }) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Set<number>>(new Set());
+  const [search, setSearch] = useState('');
   const agentMap = new Map(agents.map((a) => [a.id, a]));
   const getAgentName = (id?: string) => (id ? agentMap.get(id)?.name || id : '—');
 
@@ -44,9 +45,20 @@ export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; age
     ? null
     : Array.from(activeFilters).flatMap((i) => FILTER_TABS[i].statuses);
 
-  const filtered = allowedStatuses
+  const statusFiltered = allowedStatuses
     ? jobs.filter((j) => allowedStatuses.includes(j.status))
     : jobs;
+
+  const query = search.trim().toLowerCase();
+  const filtered = query
+    ? statusFiltered.filter((j) =>
+        j.title.toLowerCase().includes(query) ||
+        j.description.toLowerCase().includes(query) ||
+        j.requiredSkill.toLowerCase().includes(query) ||
+        getAgentName(j.posterId).toLowerCase().includes(query) ||
+        (j.assigneeId && getAgentName(j.assigneeId).toLowerCase().includes(query))
+      )
+    : statusFiltered;
 
   const sorted = [...filtered].sort((a, b) => {
     const order = ['open', 'in_progress', 'assigned', 'submitted', 'review', 'completed', 'rejected'];
@@ -59,7 +71,19 @@ export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; age
         <h2 className="panel-title">Job Marketplace</h2>
         <span className={`collapse-toggle ${collapsed ? 'collapsed' : ''}`}>&#x25BE;</span>
       </div>
-      {!collapsed && <><div className="job-filters">
+      {!collapsed && <><div className="job-search">
+        <input
+          type="text"
+          className="job-search-input"
+          placeholder="Search jobs..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {search && (
+          <button className="job-search-clear" onClick={() => setSearch('')}>&times;</button>
+        )}
+      </div>
+      <div className="job-filters">
         {FILTER_TABS.map((tab, i) => (
           <button
             key={tab.label}

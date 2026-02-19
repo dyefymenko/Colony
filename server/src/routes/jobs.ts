@@ -191,6 +191,13 @@ router.post('/:id/assign', async (req: Request, res: Response) => {
     agentDb.updateStatus(poster_id, 'idle');
     agentDb.updateStatus(assignee_id, 'working');
 
+    // Reset losing bidders back to idle
+    for (const bid of job.bids) {
+      if (bid.agentId !== assignee_id) {
+        agentDb.updateStatus(bid.agentId, 'idle');
+      }
+    }
+
     // HCS attestation
     let seqNum: number | undefined;
     try {

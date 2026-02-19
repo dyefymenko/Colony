@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useEventStream } from './hooks/useEventStream';
 import { WelcomeModal } from './components/WelcomeModal';
 import { AgentRoster } from './components/AgentRoster';
@@ -6,11 +6,44 @@ import { JobMarketplace } from './components/JobMarketplace';
 import { TokenFlow } from './components/TokenFlow';
 import { ActivityFeed } from './components/ActivityFeed';
 import { DetailPanel } from './components/DetailPanel';
+import { AgentAnalytics } from './components/AgentAnalytics';
 import './styles.css';
 
 export default function App() {
   const { events, agents, jobs, connected } = useEventStream();
   const [selection, setSelection] = useState<{ type: 'agent' | 'job'; id: string } | null>(null);
+  const [leftWidth, setLeftWidth] = useState(310);
+  const [rightWidth, setRightWidth] = useState(340);
+  const dragging = useRef<'left' | 'right' | null>(null);
+  const startX = useRef(0);
+  const startWidth = useRef(0);
+
+  const onMouseDown = useCallback((side: 'left' | 'right', e: React.MouseEvent) => {
+    e.preventDefault();
+    dragging.current = side;
+    startX.current = e.clientX;
+    startWidth.current = side === 'left' ? leftWidth : rightWidth;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const delta = ev.clientX - startX.current;
+      const newWidth = Math.max(200, Math.min(600, startWidth.current + (dragging.current === 'left' ? delta : -delta)));
+      if (dragging.current === 'left') setLeftWidth(newWidth);
+      else setRightWidth(newWidth);
+    };
+
+    const onMouseUp = () => {
+      dragging.current = null;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }, [leftWidth, rightWidth]);
 
   const totalWork = agents.reduce((s, a) => s + a.tokenBalance + a.stakedTokens, 0);
   const openJobs = jobs.filter((j) => j.status === 'open').length;
@@ -77,19 +110,21 @@ export default function App() {
       </div>
 
       {/* Three Column Layout */}
-      <div className="columns">
-        {/* Left: Agent Roster */}
+      <div className="columns" style={{ gridTemplateColumns: `${leftWidth}px 6px 1fr 6px ${rightWidth}px` }}>
         <div className="column-left">
           <AgentRoster agents={agents} onSelectAgent={(id) => setSelection({ type: 'agent', id })} />
         </div>
 
-        {/* Center: Jobs + Token Flow */}
+        <div className="resize-handle" onMouseDown={(e) => onMouseDown('left', e)} />
+
         <div className="column-center">
           <JobMarketplace jobs={jobs} agents={agents} onSelectJob={(id) => setSelection({ type: 'job', id })} />
+          <AgentAnalytics agents={agents} events={events} />
           <TokenFlow agents={agents} events={events} />
         </div>
 
-        {/* Right: Activity Feed */}
+        <div className="resize-handle" onMouseDown={(e) => onMouseDown('right', e)} />
+
         <div className="column-right">
           <ActivityFeed events={events} />
         </div>

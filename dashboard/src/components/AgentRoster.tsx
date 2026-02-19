@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Agent } from '../hooks/useEventStream';
 
 const AGENT_EMOJIS: Record<string, string> = {
@@ -12,10 +13,31 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function AgentRoster({ agents, onSelectAgent }: { agents: Agent[]; onSelectAgent?: (id: string) => void }) {
+  const [search, setSearch] = useState('');
+  const terms = search.toLowerCase().split(',').map((t) => t.trim()).filter(Boolean);
+  const filtered = terms.length > 0
+    ? agents.filter((a) => {
+        const searchable = [a.name, a.role, ...a.skills].map((s) => s.toLowerCase());
+        return terms.every((term) => searchable.some((s) => s.includes(term)));
+      })
+    : agents;
+
   return (
     <div className="agent-roster">
       <h2 className="panel-title">Agent Roster</h2>
-      {agents.map((agent) => (
+      <div className="agent-search">
+        <input
+          type="text"
+          className="agent-search-input"
+          placeholder="Search skills (comma for multiple)..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {search && (
+          <button className="agent-search-clear" onClick={() => setSearch('')}>&times;</button>
+        )}
+      </div>
+      {filtered.map((agent) => (
         <div key={agent.id} className="agent-card" onClick={() => onSelectAgent?.(agent.id)} style={{ cursor: 'pointer' }}>
           <div className="agent-header">
             <span className="agent-emoji">{AGENT_EMOJIS[agent.name] || '🤖'}</span>
@@ -72,7 +94,7 @@ export function AgentRoster({ agents, onSelectAgent }: { agents: Agent[]; onSele
           </div>
         </div>
       ))}
-      {agents.length === 0 && <div className="empty">No agents registered</div>}
+      {filtered.length === 0 && <div className="empty">{terms.length > 0 ? 'No matching agents' : 'No agents registered'}</div>}
     </div>
   );
 }
