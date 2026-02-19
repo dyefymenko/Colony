@@ -166,7 +166,6 @@ router.post('/:id/assign', async (req: Request, res: Response) => {
     const error = validateAssign(job, poster_id, assignee_id);
     if (error) return res.status(400).json({ error });
 
-    const poster = agentDb.getById(poster_id)!;
     const worker = agentDb.getById(assignee_id)!;
 
     // Look up the winning bid's amount — that's the agreed price
@@ -384,21 +383,10 @@ router.post('/:id/approve', async (req: Request, res: Response) => {
  * If so, release full escrow to worker and mark completed.
  * Returns true if auto-released (caller should return early).
  */
-const AUTO_RELEASE_MS = 2 * 60 * 60 * 1000; // 2 hours
-
 async function checkAutoRelease(job: Job, res: Response): Promise<boolean> {
   if (job.status !== 'submitted') return false;
 
-  // Find when the job was submitted (use deadline as a proxy, or check submission time)
-  // We check if the current time exceeds submission by AUTO_RELEASE_MS
-  // Since we don't store submittedAt separately, use the last event or deadline
-  // For simplicity, check if deadline has passed (deadline is set from job creation)
-  const submittedTime = new Date(job.deadline).getTime() - (4 * 60 * 60 * 1000); // approximate
-  const now = Date.now();
-
-  // More reliable: check how long ago the job was created + deadline_hours
-  // For now, just check if 2 hours have passed since the deadline
-  if (now > new Date(job.deadline).getTime()) {
+  if (Date.now() > new Date(job.deadline).getTime()) {
     const worker = agentDb.getById(job.assigneeId!)!;
     const winningBid = job.bids.find((b) => b.agentId === job.assigneeId);
     const agreedAmount = winningBid ? winningBid.amount : job.bounty;

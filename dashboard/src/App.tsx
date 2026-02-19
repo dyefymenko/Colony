@@ -40,7 +40,7 @@ export default function App() {
             <circle cx="52" cy="66" r="3.5" fill="#c0392b" /><circle cx="68" cy="66" r="3.5" fill="#c0392b" />
             <circle cx="52.5" cy="65.5" r="1.2" fill="#0c0c0c" /><circle cx="68.5" cy="65.5" r="1.2" fill="#0c0c0c" />
           </svg>
-          <h1 className="logo">AgentHire</h1>
+          <h1 className="logo">Colony</h1>
           <span className="autonomous-badge">AUTONOMOUS</span>
           <span className={`live-indicator ${connected ? 'connected' : 'disconnected'}`}>
             <span className="live-dot" />

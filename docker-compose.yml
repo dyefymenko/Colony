@@ -4,49 +4,52 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile
     ports:
       - "3001:3001"
     env_file:
       - .env
     volumes:
-      - ./server/data:/app/data
+      - ./data:/app/data
+      - ./state.json:/app/state.json:ro
+      - ./kite-wallets.json:/app/kite-wallets.json:ro
     restart: unless-stopped
 
   mock-proxy-api:
     build:
       context: ./mock-services
-      dockerfile: Dockerfile
       args:
         SERVICE: proxy-api
     ports:
       - "3010:3010"
+    volumes:
+      - ./kite-wallets.json:/app/kite-wallets.json:ro
     restart: unless-stopped
 
   mock-llm-api:
     build:
       context: ./mock-services
-      dockerfile: Dockerfile
       args:
         SERVICE: llm-api
     ports:
       - "3011:3011"
+    volumes:
+      - ./kite-wallets.json:/app/kite-wallets.json:ro
     restart: unless-stopped
 
   mock-data-feed:
     build:
       context: ./mock-services
-      dockerfile: Dockerfile
       args:
         SERVICE: data-feed
     ports:
       - "3012:3012"
+    volumes:
+      - ./kite-wallets.json:/app/kite-wallets.json:ro
     restart: unless-stopped
 
   dashboard:
     build:
       context: ./dashboard
-      dockerfile: Dockerfile
     ports:
       - "5173:80"
     depends_on:
