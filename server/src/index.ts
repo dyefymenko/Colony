@@ -5,6 +5,7 @@ import { agentRoutes } from './routes/agents';
 import { jobRoutes } from './routes/jobs';
 import { serviceRoutes } from './routes/services';
 import { eventsRouter, broadcastEvent } from './routes/events';
+import { nftRoutes } from './routes/nft';
 
 // Initialize database (runs schema creation on import)
 import './db';
@@ -26,6 +27,7 @@ app.use('/agents', agentRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/services', serviceRoutes);
 app.use('/events', eventsRouter);
+app.use('/nft', nftRoutes);
 
 // UCP well-known manifest
 app.get('/.well-known/ucp.json', (_req, res) => {

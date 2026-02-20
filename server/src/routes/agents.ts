@@ -38,7 +38,7 @@ router.post('/register', async (req: Request, res: Response) => {
         role,
         skills,
         registered: now,
-      });
+      }, hedera_account_id, agentId);
 
       txHash = await distributeTokens(hedera_account_id, 500);
     } catch (err: any) {

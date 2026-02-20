@@ -56,4 +56,7 @@ export const config = {
 
   // Database
   dbPath: path.resolve(__dirname, '../../data/agenthire.db'),
+
+  // Public URL of this server (used in NFT metadata)
+  serverUrl: process.env.SERVER_URL || 'http://localhost:3001',
 };

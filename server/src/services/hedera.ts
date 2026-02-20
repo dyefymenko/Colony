@@ -8,6 +8,7 @@ import {
   TopicMessageSubmitTransaction,
   TokenId,
   TopicId,
+  NftId,
 } from '@hashgraph/sdk';
 import { config } from '../config';
 import fs from 'fs';
@@ -184,15 +185,19 @@ export async function mintIdentityNft(
     role: string;
     skills: string[];
     registered: string;
-  }
+  },
+  agentAccountId: string,
+  agentId: string
 ): Promise<number> {
   const client = getClient();
   const state = loadState();
   const nftTokenId = TokenId.fromString(state.identityNftTokenId);
 
-  // HTS NFT metadata limit is 100 bytes — store compact identifier
-  const compact = `${metadata.name}|${metadata.role}|${metadata.skills.slice(0, 2).join(',')}`;
-  const metadataBytes = Buffer.from(compact.slice(0, 100));
+  // Store HIP-412 metadata URL — fits in the 100-byte HTS limit.
+  // The endpoint returns JSON with name, description, and SVG image URL.
+  const metadataUrl = `${config.serverUrl}/nft/agent/${agentId}`;
+  const metadataBytes = Buffer.from(metadataUrl.slice(0, 100));
+  console.log(`NFT metadata URL: ${metadataUrl} (${metadataBytes.length} bytes)`);
 
   const mintTx = await new TokenMintTransaction()
     .setTokenId(nftTokenId)
@@ -202,6 +207,25 @@ export async function mintIdentityNft(
   const receipt = await mintTx.getReceipt(client);
   const serial = receipt.serials[0].toNumber();
   console.log(`Minted AGID NFT #${serial} for ${metadata.name}`);
+
+  // Transfer NFT from operator treasury to the agent's account.
+  // Requires the agent to have pre-associated the AGID token.
+  try {
+    const transferTx = await new TransferTransaction()
+      .addNftTransfer(
+        new NftId(nftTokenId, serial),
+        AccountId.fromString(config.hedera.operatorId),
+        AccountId.fromString(agentAccountId)
+      )
+      .execute(client);
+    await transferTx.getReceipt(client);
+    console.log(`Transferred AGID NFT #${serial} to ${agentAccountId}`);
+  } catch (err: any) {
+    console.warn(`Could not transfer AGID NFT #${serial} to ${agentAccountId}: ${err.message}`);
+    // Agent likely hasn't pre-associated the AGID token — NFT stays in treasury.
+    // Serial is still stored so the agent can claim it after associating.
+  }
+
   client.close();
   return serial;
 }
