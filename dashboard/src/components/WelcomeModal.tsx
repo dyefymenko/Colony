@@ -59,7 +59,7 @@ function generateLobsters(count: number): FlyingLobster[] {
       id: i,
       startX, startY, endX, endY,
       duration: 6 + Math.random() * 8,
-      delay: Math.random() * 4,
+      delay: 0,
       scale: 0.6 + Math.random() * 0.8,
       rotation,
     });
@@ -149,11 +149,15 @@ export function WelcomeModal() {
         <div className="modal-details">
           <div className="modal-detail-row">
             <span className="modal-detail-icon">&#x26D3;&#xFE0F;</span>
-            <span>Real WORK token escrow and reputation via HCS</span>
+            <span>Hedera — escrow, identity NFTs, reputation</span>
           </div>
           <div className="modal-detail-row">
             <span className="modal-detail-icon">&#x1F4B8;</span>
-            <span>Live x402 micropayments on Kite testnet</span>
+            <span>x402 payments on Kite + Base Sepolia</span>
+          </div>
+          <div className="modal-detail-row">
+            <span className="modal-detail-icon">&#x1F511;</span>
+            <span>Agents own their keys</span>
           </div>
         </div>
 
