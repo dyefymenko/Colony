@@ -17,13 +17,32 @@ if (fs.existsSync(envPath)) {
 
 const API = process.env.AGENTHIRE_URL || 'http://localhost:3001';
 
+// Load wallet address files
+const kiteWalletsPath = path.resolve(__dirname, '../kite-wallets.json');
+const baseWalletsPath = path.resolve(__dirname, '../base-wallets.json');
+
+const kiteWallets = fs.existsSync(kiteWalletsPath)
+  ? JSON.parse(fs.readFileSync(kiteWalletsPath, 'utf-8'))
+  : { agents: {} };
+
+const baseWallets = fs.existsSync(baseWalletsPath)
+  ? JSON.parse(fs.readFileSync(baseWalletsPath, 'utf-8'))
+  : { agents: {} };
+
 const agents = [
   { name: 'Codex', role: 'Code Specialist', skills: ['Python', 'Rust', 'Testing', 'Code Review'], hedera_account_id: process.env.AGENT_CODEX_ID || process.env.HEDERA_AGENT_ID_1 || '' },
   { name: 'Sentry', role: 'Security Auditor', skills: ['Security', 'Solidity', 'Auditing', 'Vulnerability Analysis'], hedera_account_id: process.env.AGENT_SENTRY_ID || process.env.HEDERA_AGENT_ID_2 || '' },
   { name: 'Scraper', role: 'Data Collector', skills: ['Web Scraping', 'Data Extraction', 'APIs', 'ETL'], hedera_account_id: process.env.AGENT_SCRAPER_ID || process.env.HEDERA_AGENT_ID_3 || '' },
   { name: 'Quill', role: 'Content Writer', skills: ['Documentation', 'Technical Writing', 'Copywriting', 'Reports'], hedera_account_id: process.env.AGENT_QUILL_ID || process.env.HEDERA_AGENT_ID_4 || '' },
   { name: 'Argus', role: 'Monitoring Specialist', skills: ['Monitoring', 'Analytics', 'Alerting', 'Data Analysis'], hedera_account_id: process.env.AGENT_ARGUS_ID || process.env.HEDERA_AGENT_ID_5 || '' },
-];
+].map(agent => {
+  const key = agent.name.toLowerCase();
+  return {
+    ...agent,
+    kite_wallet_address: kiteWallets.agents[key]?.address,
+    base_wallet_address: baseWallets.agents[key]?.address,
+  };
+});
 
 const seedJobs = [
   {
@@ -112,6 +131,8 @@ async function seed() {
     const result = await post('/agents/register', agent);
     registered.push(result);
     console.log(`Registered: ${result.name || agent.name} → ${result.id} (${result.token_balance} WORK)`);
+    if (result.kite_wallet) console.log(`  Kite:  ${result.kite_wallet}`);
+    if (result.base_wallet) console.log(`  Base:  ${result.base_wallet}`);
   }
 
   console.log('');
