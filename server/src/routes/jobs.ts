@@ -28,8 +28,8 @@ router.post('/', (req: Request, res: Response) => {
   try {
     const { poster_id, title, description, required_skill, bounty, deadline_hours } = req.body;
 
-    if (!poster_id || !title || !required_skill || !bounty) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!poster_id || !title || !description || !required_skill || !bounty) {
+      return res.status(400).json({ error: 'Missing required fields: poster_id, title, description, required_skill, bounty' });
     }
 
     const poster = agentDb.getById(poster_id);
@@ -45,7 +45,7 @@ router.post('/', (req: Request, res: Response) => {
     const job: Omit<Job, 'bids' | 'expenses'> = {
       id: jobId,
       title,
-      description: description || title,
+      description,
       requiredSkill: required_skill,
       posterId: poster_id,
       bounty,
@@ -484,6 +484,10 @@ router.post('/:id/reject', async (req: Request, res: Response) => {
     const newPosterRep = Math.max(0, poster.reputationScore - 10);
     agentDb.updateReputation(poster_id, newPosterRep);
 
+    // Worker reputation penalty: -15 points for failing to deliver
+    const newWorkerRep = Math.max(0, worker.reputationScore - 15);
+    agentDb.updateReputation(job.assigneeId!, newWorkerRep);
+
     // HCS attestation
     let seqNum: number | undefined;
     try {
@@ -515,7 +519,7 @@ router.post('/:id/reject', async (req: Request, res: Response) => {
       agentId: job.assigneeId!,
       agentName: worker.name,
       action: 'earned_tokens',
-      detail: `${worker.name} received ${splitResult.workerAmount} WORK kill fee for "${job.title}"`,
+      detail: `${worker.name} received ${splitResult.workerAmount} WORK kill fee for "${job.title}" (rep −15: now ${newWorkerRep})`,
       jobId: job.id,
       txHash: splitResult.workerTxHash,
     });
@@ -530,6 +534,7 @@ router.post('/:id/reject', async (req: Request, res: Response) => {
         poster_tx: splitResult.posterTxHash,
       },
       poster_reputation: newPosterRep,
+      worker_reputation: newWorkerRep,
       hcs_sequence: seqNum,
     });
   } catch (err: any) {

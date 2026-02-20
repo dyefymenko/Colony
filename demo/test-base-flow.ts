@@ -1,14 +1,20 @@
 /**
- * Test the full AgentHire lifecycle:
+ * Test the AgentHire lifecycle with Base Sepolia x402 payments:
  *   1. List agents & jobs
  *   2. Agent bids on a job
  *   3. Poster assigns the winner (escrow)
- *   4. Worker makes an x402 payment to an external service
+ *   4. Worker makes an x402 payment to a Base-gated external service
  *   5. Worker submits completed work
  *   6. Poster approves + leaves rating (release + HCS attestation)
  *
- * Run: npx tsx demo/test-flow.ts
- * Requires: server running on localhost:3001, seed data loaded
+ * Run:
+ *   1. Start server:              cd server && npm run dev
+ *   2. Seed data (if needed):     npx tsx demo/seed-agents.ts
+ *   3. Start Base mock service:   cd mock-services && npx tsx base-data-feed.ts
+ *   4. Run this demo:             npx tsx demo/test-base-flow.ts
+ *
+ * Requires: server on localhost:3001, seed data loaded,
+ *           mock Base data feed on localhost:3013
  */
 
 const API = 'http://localhost:3001';
@@ -38,7 +44,7 @@ function wait(ms: number) {
 
 async function run() {
   console.log('╔══════════════════════════════════════════════╗');
-  console.log('║   AgentHire — Full Lifecycle Test            ║');
+  console.log('║   AgentHire — Base Sepolia x402 Flow Test    ║');
   console.log('╚══════════════════════════════════════════════╝\n');
 
   // ─── 1. List agents & jobs ──────────────────────────────────────────────
@@ -49,6 +55,9 @@ async function run() {
   console.log(`  ${agents.length} agents registered:`);
   for (const a of agents) {
     console.log(`    ${a.name} (${a.id}) — ${a.tokenBalance} WORK, rep ${a.reputationScore}%`);
+    if (a.baseWalletAddress) {
+      console.log(`      Base wallet: ${a.baseWalletAddress}`);
+    }
   }
   console.log(`  ${jobs.length} jobs:`);
   for (const j of jobs) {
@@ -62,10 +71,8 @@ async function run() {
     return;
   }
 
-  // poster = the agent who posted this job, worker = a different agent
   const poster = agents.find((a: any) => a.id === openJob.posterId);
   const worker = agents.find((a: any) => a.id !== openJob.posterId);
-  const worker2 = agents.find((a: any) => a.id !== openJob.posterId && a.id !== worker.id);
 
   if (!poster || !worker) {
     console.log('\n  Need at least 2 agents. Run seed-agents.ts first.');
@@ -76,34 +83,24 @@ async function run() {
   console.log(`  Skill:          ${openJob.requiredSkill}`);
   console.log(`  Description:\n${openJob.description.split('\n').map((l: string) => `    ${l}`).join('\n')}`);
   console.log(`  Poster:         ${poster.name} (${poster.id})`);
-  console.log(`  Workers:        ${worker.name}, ${worker2?.name || 'n/a'}`);
+  console.log(`  Worker:         ${worker.name} (${worker.id})`);
 
-  // ─── 2. Agents bid on the job ───────────────────────────────────────────
-  console.log('\n─── Step 2: Placing bids ───');
+  // ─── 2. Agent bids on the job ─────────────────────────────────────────
+  console.log('\n─── Step 2: Placing bid ───');
 
-  const bid1 = await post(`/jobs/${openJob.id}/bid`, {
+  const bid = await post(`/jobs/${openJob.id}/bid`, {
     agent_id: worker.id,
     amount: openJob.bounty - 10,
-    message: `${worker.name} can do this efficiently with specialized tools.`,
+    message: `${worker.name} can handle this using Base-powered data feeds.`,
   });
-  console.log(`  ${worker.name} bid ${bid1.amount} WORK`);
+  console.log(`  ${worker.name} bid ${bid.amount} WORK`);
 
-  if (worker2) {
-    const bid2 = await post(`/jobs/${openJob.id}/bid`, {
-      agent_id: worker2.id,
-      amount: openJob.bounty - 5,
-      message: `${worker2.name} has extensive experience in ${openJob.requiredSkill}.`,
-    });
-    console.log(`  ${worker2.name} bid ${bid2.amount} WORK`);
-  }
-
-  // Check job now has bids
   const jobWithBids = await get(`/jobs/${openJob.id}`);
-  console.log(`  Job now has ${jobWithBids.bids.length} bids`);
+  console.log(`  Job now has ${jobWithBids.bids.length} bid(s)`);
 
   await wait(1000);
 
-  // ─── 3. Poster assigns the winner (triggers escrow) ─────────────────────
+  // ─── 3. Poster assigns the winner (triggers escrow) ───────────────────
   console.log('\n─── Step 3: Assigning winner (escrow) ───');
 
   const assignment = await post(`/jobs/${openJob.id}/assign`, {
@@ -114,54 +111,64 @@ async function run() {
   console.log(`  Escrow tx: ${assignment.tx_hash || '(local only)'}`);
   console.log(`  HCS sequence: ${assignment.hcs_sequence || '(pending)'}`);
 
-  // Check balances
   const posterAfterEscrow = await get(`/agents/${poster.id}`);
   console.log(`  ${poster.name} balance: ${posterAfterEscrow.tokenBalance} WORK (was ${poster.tokenBalance})`);
 
   await wait(1000);
 
-  // ─── 4. Worker uses x402 proxy for external service ─────────────────────
-  console.log('\n─── Step 4: x402 payment to external service ───');
+  // ─── 4. Worker uses x402 proxy on BASE chain ─────────────────────────
+  console.log('\n─── Step 4: x402 payment on BASE SEPOLIA ───');
 
   const x402Result = await post('/services/x402-request', {
     agent_id: worker.id,
     job_id: openJob.id,
-    url: 'http://localhost:3010/scrape',
-    method: 'POST',
-    body: { urls: ['https://example.com/product/1', 'https://example.com/product/2'] },
+    url: 'http://localhost:3013/market',
+    method: 'GET',
+    chain: 'base',
   });
-  console.log(`  x402 payment: ${x402Result.payment.amount}`);
-  console.log(`  Kite tx: ${x402Result.payment.kite_tx_hash}`);
-  console.log(`  Service returned ${x402Result.result?.results?.length || 0} results`);
+  console.log(`  Chain:   ${x402Result.payment.chain}`);
+  console.log(`  Network: ${x402Result.payment.network}`);
+  console.log(`  Amount:  ${x402Result.payment.amount}`);
+  console.log(`  Tx hash: ${x402Result.payment.tx_hash}`);
+  console.log(`  Tx URL:  ${x402Result.payment.tx_url}`);
+  console.log(`  Service returned ${x402Result.result?.data?.length || 0} market entries`);
+
+  // Verify the expense was logged
+  const jobAfterPayment = await get(`/jobs/${openJob.id}`);
+  console.log(`  Job expenses: ${jobAfterPayment.totalExpenses}`);
+  if (jobAfterPayment.expenses?.length) {
+    const lastExpense = jobAfterPayment.expenses[jobAfterPayment.expenses.length - 1];
+    console.log(`  Last expense: ${lastExpense.amount} to ${lastExpense.service}`);
+  }
 
   await wait(1000);
 
-  // ─── 5. Worker submits completed work ───────────────────────────────────
+  // ─── 5. Worker submits completed work ─────────────────────────────────
   console.log('\n─── Step 5: Submitting work ───');
 
   const submission = await post(`/jobs/${openJob.id}/submit`, {
     agent_id: worker.id,
-    submission_url: 'https://gist.github.com/example/result-data',
-    notes: 'Scraped all pages successfully. Data cleaned and structured as JSON.',
+    submission_url: 'https://gist.github.com/example/base-market-analysis',
+    notes: 'Fetched market data via Base x402 service. Analysis complete.',
   });
   console.log(`  Work submitted: ${submission.status}`);
 
   await wait(1000);
 
-  // ─── 6. Poster approves + leaves review (release + HCS) ────────────────
+  // ─── 6. Poster approves + leaves review (release + HCS) ──────────────
   console.log('\n─── Step 6: Approving work (release + attestation) ───');
 
   const approval = await post(`/jobs/${openJob.id}/approve`, {
     poster_id: poster.id,
     rating: 5,
-    review: 'Excellent work. Fast delivery, accurate data, well-structured output.',
+    review: 'Great work. Used Base Sepolia x402 payments seamlessly for data acquisition.',
   });
   console.log(`  Status: ${approval.status}`);
   console.log(`  Payment tx: ${approval.payment_tx || '(local only)'}`);
   console.log(`  HCS job attestation: #${approval.hcs_job_sequence || '(pending)'}`);
   console.log(`  HCS reputation: #${approval.hcs_reputation_sequence || '(pending)'}`);
 
-  // ─── Final state ────────────────────────────────────────────────────────
+  // ─── Final state ──────────────────────────────────────────────────────
   console.log('\n─── Final State ───');
 
   const finalAgents: any[] = await get('/agents');
@@ -172,12 +179,23 @@ async function run() {
   const finalJob = await get(`/jobs/${openJob.id}`);
   console.log(`\n  Job "${finalJob.title}":`);
   console.log(`    Status: ${finalJob.status}`);
-  console.log(`    Expenses: ${finalJob.totalExpenses} KITE`);
+  console.log(`    Expenses: ${finalJob.totalExpenses}`);
   console.log(`    TX: ${finalJob.txHash || 'n/a'}`);
 
+  // Show Base wallet info
+  console.log('\n─── Base Sepolia Wallets ───');
+  try {
+    const baseWallets = await get('/services/base-wallets');
+    for (const w of baseWallets.wallets || []) {
+      console.log(`  ${w.name}: ${w.address} (${w.balance})`);
+    }
+  } catch {
+    console.log('  (Base wallets not configured)');
+  }
+
   console.log('\n╔══════════════════════════════════════════════╗');
-  console.log('║   Full lifecycle complete!                    ║');
-  console.log('║   Check the dashboard at localhost:5173       ║');
+  console.log('║   Base Sepolia x402 flow complete!            ║');
+  console.log('║   Check the dashboard at localhost:5173        ║');
   console.log('╚══════════════════════════════════════════════╝');
 }
 

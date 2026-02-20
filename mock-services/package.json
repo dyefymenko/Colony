@@ -6,7 +6,8 @@
     "proxy-api": "tsx proxy-api.ts",
     "llm-api": "tsx llm-api.ts",
     "data-feed": "tsx data-feed.ts",
-    "all": "concurrently \"npm run proxy-api\" \"npm run llm-api\" \"npm run data-feed\""
+    "base-data-feed": "tsx base-data-feed.ts",
+    "all": "concurrently \"npm run proxy-api\" \"npm run llm-api\" \"npm run data-feed\" \"npm run base-data-feed\""
   },
   "dependencies": {
     "express": "^4.21.2"

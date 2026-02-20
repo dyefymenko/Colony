@@ -11,6 +11,7 @@ export interface AgentEvent {
   txHash?: string;
   kiteTxHash?: string;
   hcsSequenceNumber?: number;
+  chain?: 'kite' | 'base';
 }
 
 export interface Agent {
@@ -26,6 +27,7 @@ export interface Agent {
   completedJobs: number;
   kiteAgentPassportId?: string;
   kiteUsdcBalance?: string;
+  baseWalletAddress?: string;
   status: string;
   registeredAt: string;
 }
@@ -41,7 +43,7 @@ export interface Job {
   bids: { agentId: string; amount: number; message: string; reputation: number; createdAt: string }[];
   assigneeId?: string;
   submissionUrl?: string;
-  expenses: { agentId: string; service: string; amount: string; kiteTxHash: string; timestamp: string }[];
+  expenses: { agentId: string; service: string; amount: string; kiteTxHash: string; timestamp: string; chain?: 'kite' | 'base' }[];
   totalExpenses: string;
   hcsSequenceNumber?: number;
   txHash?: string;

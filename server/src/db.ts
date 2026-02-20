@@ -31,6 +31,7 @@ db.exec(`
     completedJobs INTEGER DEFAULT 0,
     kiteAgentPassportId TEXT,
     kiteUsdcBalance TEXT DEFAULT '0',
+    baseWalletAddress TEXT,
     status TEXT DEFAULT 'idle',
     registeredAt TEXT NOT NULL
   );
@@ -74,6 +75,7 @@ db.exec(`
     amount TEXT NOT NULL,
     kiteTxHash TEXT NOT NULL,
     timestamp TEXT NOT NULL,
+    chain TEXT,
     FOREIGN KEY (jobId) REFERENCES jobs(id),
     FOREIGN KEY (agentId) REFERENCES agents(id)
   );
@@ -88,15 +90,21 @@ db.exec(`
     jobId TEXT,
     txHash TEXT,
     kiteTxHash TEXT,
-    hcsSequenceNumber INTEGER
+    hcsSequenceNumber INTEGER,
+    chain TEXT
   );
 `);
+
+// Migrate existing tables: add columns if missing
+try { db.exec('ALTER TABLE expenses ADD COLUMN chain TEXT'); } catch {}
+try { db.exec('ALTER TABLE events ADD COLUMN chain TEXT'); } catch {}
+try { db.exec('ALTER TABLE agents ADD COLUMN baseWalletAddress TEXT'); } catch {}
 
 // ─── Agent CRUD ───────────────────────────────────────────────────────────────
 
 const insertAgent = db.prepare(`
-  INSERT INTO agents (id, name, role, skills, hederaAccountId, identityNftSerial, tokenBalance, stakedTokens, reputationScore, completedJobs, kiteAgentPassportId, kiteUsdcBalance, status, registeredAt)
-  VALUES (@id, @name, @role, @skills, @hederaAccountId, @identityNftSerial, @tokenBalance, @stakedTokens, @reputationScore, @completedJobs, @kiteAgentPassportId, @kiteUsdcBalance, @status, @registeredAt)
+  INSERT INTO agents (id, name, role, skills, hederaAccountId, identityNftSerial, tokenBalance, stakedTokens, reputationScore, completedJobs, kiteAgentPassportId, kiteUsdcBalance, baseWalletAddress, status, registeredAt)
+  VALUES (@id, @name, @role, @skills, @hederaAccountId, @identityNftSerial, @tokenBalance, @stakedTokens, @reputationScore, @completedJobs, @kiteAgentPassportId, @kiteUsdcBalance, @baseWalletAddress, @status, @registeredAt)
 `);
 
 const getAgent = db.prepare('SELECT * FROM agents WHERE id = ?');
@@ -106,6 +114,7 @@ const updateAgentBalance = db.prepare('UPDATE agents SET tokenBalance = ? WHERE 
 const updateAgentReputation = db.prepare('UPDATE agents SET reputationScore = ? WHERE id = ?');
 const incrementCompletedJobs = db.prepare('UPDATE agents SET completedJobs = completedJobs + 1 WHERE id = ?');
 const updateAgentNftSerial = db.prepare('UPDATE agents SET identityNftSerial = ? WHERE id = ?');
+const updateAgentBaseWallet = db.prepare('UPDATE agents SET baseWalletAddress = ? WHERE id = ?');
 
 function parseAgent(row: any): Agent | null {
   if (!row) return null;
@@ -122,6 +131,7 @@ export const agentDb = {
       skills: JSON.stringify(agent.skills),
       kiteAgentPassportId: agent.kiteAgentPassportId || null,
       kiteUsdcBalance: agent.kiteUsdcBalance || '0',
+      baseWalletAddress: agent.baseWalletAddress || null,
     });
     return agent;
   },
@@ -152,6 +162,10 @@ export const agentDb = {
 
   updateNftSerial(id: string, serial: number): void {
     updateAgentNftSerial.run(serial, id);
+  },
+
+  updateBaseWallet(id: string, address: string): void {
+    updateAgentBaseWallet.run(address, id);
   },
 };
 
@@ -263,8 +277,8 @@ export const bidDb = {
 // ─── Expense CRUD ─────────────────────────────────────────────────────────────
 
 const insertExpense = db.prepare(`
-  INSERT INTO expenses (jobId, agentId, service, amount, kiteTxHash, timestamp)
-  VALUES (@jobId, @agentId, @service, @amount, @kiteTxHash, @timestamp)
+  INSERT INTO expenses (jobId, agentId, service, amount, kiteTxHash, timestamp, chain)
+  VALUES (@jobId, @agentId, @service, @amount, @kiteTxHash, @timestamp, @chain)
 `);
 
 const getExpensesByJob = db.prepare('SELECT * FROM expenses WHERE jobId = ?');
@@ -272,7 +286,7 @@ const getExpensesByAgent = db.prepare('SELECT * FROM expenses WHERE agentId = ?'
 
 export const expenseDb = {
   create(jobId: string, expense: JobExpense): void {
-    insertExpense.run({ jobId, ...expense });
+    insertExpense.run({ jobId, ...expense, chain: expense.chain || null });
   },
 
   getByJobId(jobId: string): JobExpense[] {
@@ -287,8 +301,8 @@ export const expenseDb = {
 // ─── Event CRUD ───────────────────────────────────────────────────────────────
 
 const insertEvent = db.prepare(`
-  INSERT INTO events (id, timestamp, agentId, agentName, action, detail, jobId, txHash, kiteTxHash, hcsSequenceNumber)
-  VALUES (@id, @timestamp, @agentId, @agentName, @action, @detail, @jobId, @txHash, @kiteTxHash, @hcsSequenceNumber)
+  INSERT INTO events (id, timestamp, agentId, agentName, action, detail, jobId, txHash, kiteTxHash, hcsSequenceNumber, chain)
+  VALUES (@id, @timestamp, @agentId, @agentName, @action, @detail, @jobId, @txHash, @kiteTxHash, @hcsSequenceNumber, @chain)
 `);
 
 const getAllEvents = db.prepare('SELECT * FROM events ORDER BY timestamp DESC');
@@ -302,6 +316,7 @@ export const eventDb = {
       txHash: event.txHash || null,
       kiteTxHash: event.kiteTxHash || null,
       hcsSequenceNumber: event.hcsSequenceNumber || null,
+      chain: event.chain || null,
     });
   },
 

@@ -26,10 +26,72 @@ const agents = [
 ];
 
 const seedJobs = [
-  { title: 'Write unit tests for payment module', required_skill: 'Testing', bounty: 60, deadline_hours: 4, description: 'Need comprehensive pytest unit tests for the HTS payment service. Cover edge cases: insufficient balance, network timeout, invalid token ID.' },
-  { title: 'Scrape 200 DeFi protocol pages', required_skill: 'Web Scraping', bounty: 80, deadline_hours: 6, description: 'Collect TVL, APY, and token data from top 200 DeFi protocols. Output as structured JSON. Use proxy to avoid rate limits.' },
-  { title: 'Audit escrow smart contract', required_skill: 'Security', bounty: 100, deadline_hours: 8, description: 'Security review of the token escrow logic. Check for reentrancy, overflow, access control issues. Provide severity-rated findings report.' },
-  { title: 'Write API documentation', required_skill: 'Documentation', bounty: 45, deadline_hours: 3, description: 'Document all REST endpoints with request/response schemas, auth requirements, and curl examples. Markdown format.' },
+  {
+    title: 'Write unit tests for payment module',
+    required_skill: 'Testing',
+    bounty: 60,
+    deadline_hours: 4,
+    description: `Write comprehensive pytest unit tests for the HTS (Hedera Token Service) payment module located at server/src/services/hedera.ts.
+
+Requirements:
+- Cover all public functions: distributeTokens, createEscrow, releaseEscrowToWorker, splitEscrow
+- Test edge cases: insufficient balance, network timeout, invalid token ID, zero-amount transfers
+- Mock the Hedera SDK client — do not make live testnet calls
+- Each test must have a clear arrange/act/assert structure with descriptive names
+- Achieve ≥90% branch coverage on the payment module
+- Output: a test file at server/src/__tests__/hedera.test.ts plus a short coverage report`,
+  },
+  {
+    title: 'Scrape 200 DeFi protocol pages',
+    required_skill: 'Web Scraping',
+    bounty: 80,
+    deadline_hours: 6,
+    description: `Collect on-chain and off-chain data for the top 200 DeFi protocols by TVL.
+
+Data points required per protocol: name, chain, TVL (USD), 7-day APY, primary token address, 24h volume, and website URL. Sources: DeFiLlama API, individual protocol dashboards.
+
+Deliverables:
+- defi_protocols.json — structured array, one object per protocol
+- scrape_log.txt — timestamp, source URL, HTTP status for each fetch
+- Use rotating proxies or delays to avoid rate limiting (max 2 req/sec per domain)
+- Flag any protocols where data is missing or stale (>24h old)`,
+  },
+  {
+    title: 'Audit escrow smart contract',
+    required_skill: 'Security',
+    bounty: 100,
+    deadline_hours: 8,
+    description: `Perform a full security audit of the token escrow logic in server/src/services/escrow.ts and the Hedera HTS integration in server/src/services/hedera.ts.
+
+Scope:
+- Reentrancy vulnerabilities in multi-step token transfers
+- Integer overflow/underflow in bounty and split calculations
+- Access control: verify only the designated poster can release or reject
+- Front-running risks in bid/assign flow
+- Proper error handling — no silent failures that leave funds stuck
+
+Deliverables:
+- audit_report.md with findings sorted by severity (Critical / High / Medium / Low / Info)
+- For each finding: description, affected code lines, proof-of-concept (where applicable), and recommended fix
+- Executive summary suitable for a non-technical reader`,
+  },
+  {
+    title: 'Write API documentation',
+    required_skill: 'Documentation',
+    bounty: 45,
+    deadline_hours: 3,
+    description: `Document every REST endpoint exposed by the AgentHire server (server/src/routes/).
+
+For each endpoint include:
+- HTTP method and path
+- Description of what it does
+- Request body schema (with field types, required vs optional, and valid values)
+- Response schema for success and each error case
+- A working curl example using localhost:3001
+- Any auth or precondition requirements
+
+Format: a single docs/API.md file using standard Markdown with fenced code blocks for JSON examples. Group endpoints by resource: /agents, /jobs, /services. Include a brief intro section explaining the overall API design and base URL conventions.`,
+  },
 ];
 
 async function post(path: string, body: any) {

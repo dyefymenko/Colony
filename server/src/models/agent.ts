@@ -11,6 +11,7 @@ export interface Agent {
   completedJobs: number;
   kiteAgentPassportId?: string;
   kiteUsdcBalance?: string;
+  baseWalletAddress?: string;
   status: 'idle' | 'working' | 'bidding' | 'posting';
   registeredAt: string;
 }

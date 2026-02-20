@@ -20,4 +20,5 @@ export interface AgentEvent {
   txHash?: string;
   kiteTxHash?: string;
   hcsSequenceNumber?: number;
+  chain?: 'kite' | 'base';
 }

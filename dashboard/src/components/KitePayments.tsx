@@ -6,7 +6,7 @@ export function KitePayments({ events }: { events: AgentEvent[] }) {
   return (
     <div className="kite-payments">
       <h2 className="panel-title">
-        <span className="kite-label">Kite x402 Payments</span>
+        <span className="kite-label">x402 Payments</span>
       </h2>
       <div className="payment-list">
         {x402Events.slice(0, 20).map((event) => (
@@ -20,12 +20,14 @@ export function KitePayments({ events }: { events: AgentEvent[] }) {
             <div className="payment-detail">{event.detail}</div>
             {event.kiteTxHash && (
               <a
-                href={`https://testnet.kitescan.ai/tx/${event.kiteTxHash}`}
+                href={event.chain === 'base'
+                  ? `https://sepolia.basescan.org/tx/${event.kiteTxHash}`
+                  : `https://testnet.kitescan.ai/tx/${event.kiteTxHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="kite-tx"
               >
-                tx: {event.kiteTxHash.slice(0, 24)}...
+                {event.chain === 'base' ? '[Base]' : '[Kite]'} tx: {event.kiteTxHash.slice(0, 24)}...
               </a>
             )}
           </div>

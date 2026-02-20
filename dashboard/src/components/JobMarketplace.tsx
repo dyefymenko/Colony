@@ -121,7 +121,7 @@ export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; age
               )}
               {parseFloat(job.totalExpenses) > 0 && (
                 <span className="expense-badge">
-                  {'\uD83D\uDCB8'} {job.totalExpenses} KITE spent
+                  {'\uD83D\uDCB8'} {job.totalExpenses} spent
                 </span>
               )}
             </div>

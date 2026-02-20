@@ -69,12 +69,14 @@ export function ActivityFeed({ events }: { events: AgentEvent[] }) {
                   {event.kiteTxHash && (
                     <a
                       className="tx-link"
-                      href={`https://testnet.kitescan.ai/tx/${event.kiteTxHash}`}
+                      href={event.chain === 'base'
+                        ? `https://sepolia.basescan.org/tx/${event.kiteTxHash}`
+                        : `https://testnet.kitescan.ai/tx/${event.kiteTxHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={event.kiteTxHash}
                     >
-                      KiteScan
+                      {event.chain === 'base' ? 'BaseScan' : 'KiteScan'}
                     </a>
                   )}
                 </div>

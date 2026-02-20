@@ -44,6 +44,13 @@ export const config = {
     usdcAddress: process.env.KITE_USDC_ADDRESS || '',
   },
 
+  // Base Sepolia x402
+  base: {
+    rpcUrl: process.env.BASE_RPC_URL || 'https://sepolia.base.org',
+    chainId: parseInt(process.env.BASE_CHAIN_ID || '84532', 10),
+    explorerUrl: process.env.BASE_EXPLORER_URL || 'https://sepolia.basescan.org',
+  },
+
   // State file (created by bootstrap script)
   stateFile: path.resolve(__dirname, '../../state.json'),
 

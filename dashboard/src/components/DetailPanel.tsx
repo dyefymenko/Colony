@@ -28,6 +28,32 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
     const workedJobs = jobs.filter((j) => j.assigneeId === agentId);
     const agentEvents = events.filter((e) => e.agentId === agentId);
 
+    // Compute WORK earned from completed jobs (winning bid amount)
+    const earned = workedJobs
+      .filter((j) => j.status === 'completed')
+      .reduce((sum, j) => {
+        const bid = j.bids.find((b) => b.agentId === agentId);
+        return sum + (bid ? bid.amount : j.bounty);
+      }, 0);
+
+    // Sum x402 expenses per chain
+    const allExpenses = workedJobs.flatMap((j) => j.expenses.filter((e) => e.agentId === agentId));
+    const kiteSpent = allExpenses
+      .filter((e) => e.chain !== 'base')
+      .reduce((sum, e) => {
+        const match = e.amount.match(/([\d.]+)/);
+        return sum + (match ? parseFloat(match[1]) : 0);
+      }, 0);
+    const baseSpent = allExpenses
+      .filter((e) => e.chain === 'base')
+      .reduce((sum, e) => {
+        const match = e.amount.match(/([\d.]+)/);
+        return sum + (match ? parseFloat(match[1]) : 0);
+      }, 0);
+
+    const commissioned = postedJobs.length;
+    const completed = agent.completedJobs;
+
     return (
       <div className="detail-panel">
         <div className="detail-header">
@@ -35,11 +61,91 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
           <button className="detail-close" onClick={onClose}>&times;</button>
         </div>
 
-        <div className="detail-meta">
-          <span>{agent.role}</span>
-          <span>{agent.tokenBalance} WORK</span>
-          <span>Rep {agent.reputationScore}%</span>
-          <span>{agent.completedJobs} jobs done</span>
+        <div className="detail-role">{agent.role}</div>
+
+        {agent.skills.length > 0 && (
+          <div className="skill-tags" style={{ marginBottom: '16px' }}>
+            {agent.skills.map((skill) => (
+              <span key={skill} className="skill-tag">{skill}</span>
+            ))}
+          </div>
+        )}
+
+        <div className="detail-stats-grid">
+          <div className="detail-stat">
+            <span className="detail-stat-value token">{agent.tokenBalance}</span>
+            <span className="detail-stat-label">WORK</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value rep">{agent.reputationScore}%</span>
+            <span className="detail-stat-label">Rep</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value earned">{earned}</span>
+            <span className="detail-stat-label">Earned</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value spent">{kiteSpent > 0 ? kiteSpent.toFixed(4) : '0'}</span>
+            <span className="detail-stat-label">x402 Kite Spent</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value spent">{baseSpent > 0 ? baseSpent.toFixed(6) : '0'}</span>
+            <span className="detail-stat-label">x402 Base Spent</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value commissioned">{commissioned}</span>
+            <span className="detail-stat-label">Jobs Posted</span>
+          </div>
+          <div className="detail-stat">
+            <span className="detail-stat-value completed">{completed}</span>
+            <span className="detail-stat-label">Jobs Done</span>
+          </div>
+        </div>
+
+        <div className="detail-section">
+          <h3 className="detail-section-title">Wallets</h3>
+          {agent.hederaAccountId && (
+            <div className="kite-wallet">
+              <span className="kite-wallet-label">Hedera</span>
+              <a
+                href={`https://hashscan.io/testnet/account/${agent.hederaAccountId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="kite-wallet-address"
+                title={agent.hederaAccountId}
+              >
+                {agent.hederaAccountId}
+              </a>
+            </div>
+          )}
+          {agent.kiteAgentPassportId && (
+            <div className="kite-wallet">
+              <span className="kite-wallet-label">Kite</span>
+              <a
+                href={`https://testnet.kitescan.ai/address/${agent.kiteAgentPassportId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="kite-wallet-address"
+                title={agent.kiteAgentPassportId}
+              >
+                {agent.kiteAgentPassportId.slice(0, 8)}...{agent.kiteAgentPassportId.slice(-6)}
+              </a>
+            </div>
+          )}
+          {agent.baseWalletAddress && (
+            <div className="kite-wallet">
+              <span className="kite-wallet-label">Base</span>
+              <a
+                href={`https://sepolia.basescan.org/address/${agent.baseWalletAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="kite-wallet-address"
+                title={agent.baseWalletAddress}
+              >
+                {agent.baseWalletAddress.slice(0, 8)}...{agent.baseWalletAddress.slice(-6)}
+              </a>
+            </div>
+          )}
         </div>
 
         {workedJobs.length > 0 && (
@@ -58,7 +164,7 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
                   <div className="detail-job-info">
                     {bid && <span>Bid: {bid.amount} WORK</span>}
                     <span>Bounty: {job.bounty} WORK</span>
-                    {parseFloat(job.totalExpenses) > 0 && <span>Expenses: {job.totalExpenses} KITE</span>}
+                    {parseFloat(job.totalExpenses) > 0 && <span>Expenses: {job.totalExpenses}</span>}
                   </div>
                 </div>
               );
@@ -123,6 +229,12 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
           <span>Skill: {job.requiredSkill}</span>
         </div>
 
+        {job.description && (
+          <div className="detail-description">
+            {job.description}
+          </div>
+        )}
+
         <div className="detail-section">
           <h3 className="detail-section-title">Participants</h3>
           <div className="detail-participants">
@@ -162,18 +274,20 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
 
         {job.expenses.length > 0 && (
           <div className="detail-section">
-            <h3 className="detail-section-title">Expenses ({job.totalExpenses} KITE)</h3>
+            <h3 className="detail-section-title">Expenses ({job.totalExpenses})</h3>
             {job.expenses.map((exp, i) => (
               <div key={i} className="detail-expense">
                 <span>{exp.amount} to {exp.service}</span>
                 {exp.kiteTxHash && (
                   <a
                     className="tx-link"
-                    href={`https://testnet.kitescan.ai/tx/${exp.kiteTxHash}`}
+                    href={exp.chain === 'base'
+                      ? `https://sepolia.basescan.org/tx/${exp.kiteTxHash}`
+                      : `https://testnet.kitescan.ai/tx/${exp.kiteTxHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    KiteScan
+                    {exp.chain === 'base' ? 'BaseScan' : 'KiteScan'}
                   </a>
                 )}
               </div>
@@ -217,8 +331,10 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
                           target="_blank" rel="noopener noreferrer">HashScan</a>
                       )}
                       {e.kiteTxHash && (
-                        <a className="tx-link" href={`https://testnet.kitescan.ai/tx/${e.kiteTxHash}`}
-                          target="_blank" rel="noopener noreferrer">KiteScan</a>
+                        <a className="tx-link" href={e.chain === 'base'
+                            ? `https://sepolia.basescan.org/tx/${e.kiteTxHash}`
+                            : `https://testnet.kitescan.ai/tx/${e.kiteTxHash}`}
+                          target="_blank" rel="noopener noreferrer">{e.chain === 'base' ? 'BaseScan' : 'KiteScan'}</a>
                       )}
                     </div>
                   )}

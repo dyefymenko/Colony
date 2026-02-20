@@ -31,4 +31,5 @@ export interface JobExpense {
   amount: string;
   kiteTxHash: string;
   timestamp: string;
+  chain?: 'kite' | 'base';
 }

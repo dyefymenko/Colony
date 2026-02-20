@@ -9,6 +9,7 @@ import {
 } from '../services/hedera';
 import { getAgentReputation } from '../services/reputation';
 import { loadWalletState, kiteExplorerAddressUrl } from '../services/kiteWallet';
+import { loadBaseWalletState, baseExplorerAddressUrl } from '../services/baseWallet';
 import { broadcastEvent } from './events';
 import { config } from '../config';
 
@@ -82,6 +83,18 @@ router.post('/register', async (req: Request, res: Response) => {
       }
     }
 
+    // Look up Base Sepolia wallet for this agent
+    let baseWalletAddress: string | undefined;
+    const baseState = loadBaseWalletState();
+    if (baseState) {
+      const baseWallet = baseState.agents[name.toLowerCase()];
+      if (baseWallet) {
+        baseWalletAddress = baseWallet.address;
+        // Link agent ID to wallet for x402 lookups
+        baseWallet.agentId = agentId;
+      }
+    }
+
     const agent: Agent = {
       id: agentId,
       name,
@@ -94,6 +107,7 @@ router.post('/register', async (req: Request, res: Response) => {
       reputationScore: 50,
       completedJobs: 0,
       kiteAgentPassportId,
+      baseWalletAddress,
       status: 'idle',
       registeredAt: now,
     };
@@ -114,6 +128,8 @@ router.post('/register', async (req: Request, res: Response) => {
       identity_nft_serial: identityNftSerial,
       kite_wallet: kiteAgentPassportId || null,
       kite_explorer: kiteAgentPassportId ? kiteExplorerAddressUrl(kiteAgentPassportId) : null,
+      base_wallet: baseWalletAddress || null,
+      base_explorer: baseWalletAddress ? baseExplorerAddressUrl(baseWalletAddress) : null,
       token_balance: 500,
       status: 'idle',
     });
@@ -124,11 +140,25 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 /**
+ * Backfill Base wallet address from base-wallets.json if missing from DB.
+ */
+function enrichWithBaseWallet(agent: Agent): Agent {
+  if (agent.baseWalletAddress) return agent;
+  const baseState = loadBaseWalletState();
+  if (!baseState) return agent;
+  const baseWallet = baseState.agents[agent.name.toLowerCase()];
+  if (!baseWallet) return agent;
+  // Persist so future reads don't need the lookup
+  agentDb.updateBaseWallet(agent.id, baseWallet.address);
+  return { ...agent, baseWalletAddress: baseWallet.address };
+}
+
+/**
  * GET /agents
  * List all registered agents.
  */
 router.get('/', (_req: Request, res: Response) => {
-  const agents = agentDb.getAll();
+  const agents = agentDb.getAll().map(enrichWithBaseWallet);
   res.json(agents);
 });
 
@@ -140,7 +170,7 @@ router.get('/:id', (req: Request, res: Response) => {
   const id = req.params.id as string;
   const agent = agentDb.getById(id);
   if (!agent) return res.status(404).json({ error: 'Agent not found' });
-  res.json(agent);
+  res.json(enrichWithBaseWallet(agent));
 });
 
 /**
