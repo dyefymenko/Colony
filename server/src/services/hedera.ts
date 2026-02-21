@@ -26,6 +26,16 @@ interface HederaState {
 }
 
 function loadState(): HederaState {
+  // Prefer env vars (Railway/production) over the local state file
+  if (process.env.HEDERA_WORK_TOKEN_ID) {
+    return {
+      workTokenId:         process.env.HEDERA_WORK_TOKEN_ID!,
+      identityNftTokenId:  process.env.HEDERA_IDENTITY_NFT_TOKEN_ID!,
+      jobTopicId:          process.env.HEDERA_JOB_TOPIC_ID!,
+      reputationTopicId:   process.env.HEDERA_REPUTATION_TOPIC_ID!,
+      operatorId:          config.hedera.operatorId,
+    };
+  }
   const raw = fs.readFileSync(config.stateFile, 'utf-8');
   return JSON.parse(raw);
 }

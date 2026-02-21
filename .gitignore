@@ -1,0 +1,25 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Wallet files — contain private keys, never commit
+kite-wallets.json
+base-wallets.json
+
+# Database
+data/
+
+# Build output
+dist/
+build/
+*.js.map
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
