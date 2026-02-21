@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { agentDb } from '../db';
 import { config } from '../config';
 import { generateNftSvg } from '../services/nftImage';
+import { uploadSvgToIpfs, uploadMetadataToIpfs } from '../services/pinata';
 
 const router = Router();
 
@@ -34,6 +35,21 @@ router.get('/agent/:agentId', (req: Request, res: Response) => {
       registered_at: agent.registeredAt,
     },
   });
+});
+
+/** GET /nft/debug/pinata — test Pinata connectivity, returns result or error */
+router.get('/debug/pinata', async (_req: Request, res: Response) => {
+  const jwt = process.env.PINATA_JWT;
+  if (!jwt) return res.json({ error: 'PINATA_JWT not set' });
+
+  try {
+    const testSvg = '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="10"/></svg>';
+    const imageUri = await uploadSvgToIpfs(testSvg, 'debug-test');
+    const metaUri = await uploadMetadataToIpfs({ test: true, image: imageUri }, 'debug-test');
+    res.json({ ok: true, imageUri, metaUri });
+  } catch (err: any) {
+    res.json({ ok: false, error: err.message, stack: err.stack });
+  }
 });
 
 export { router as nftRoutes };
