@@ -232,7 +232,7 @@ export async function mintIdentityNft(
     console.log(`IPFS metadata: ${metadataUri}`);
     console.log(`IPFS image:    ${imageUri}`);
   } catch (err: any) {
-    console.warn(`Pinata upload failed, falling back to server URL: ${err.message}`);
+    console.warn(`Pinata upload failed, falling back to server URL: ${err.message ?? err}`);
   }
 
   const metadataBytes = Buffer.from(metadataUri.slice(0, 100));

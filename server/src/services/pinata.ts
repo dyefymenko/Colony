@@ -15,9 +15,10 @@ function getJwt(): string {
  * Upload an SVG string to Pinata and return an ipfs:// URI.
  */
 export async function uploadSvgToIpfs(svg: string, name: string): Promise<string> {
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  // Use File (not Blob) so Node 20's FormData sets the filename in Content-Disposition
+  const file = new File([svg], `${name}.svg`, { type: 'image/svg+xml' });
   const form = new FormData();
-  form.append('file', blob, `${name}.svg`);
+  form.append('file', file);
   form.append('pinataMetadata', JSON.stringify({ name: `${name} — Colony NFT Image` }));
   form.append('pinataOptions', JSON.stringify({ cidVersion: 1 }));
 
