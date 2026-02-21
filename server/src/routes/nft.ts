@@ -3,6 +3,8 @@ import { agentDb } from '../db';
 import { config } from '../config';
 import { generateNftSvg } from '../services/nftImage';
 
+const router = Router();
+
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
 /** GET /nft/agent/:agentId/image — SVG identity card */
