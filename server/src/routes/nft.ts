@@ -235,7 +235,7 @@ function generateSvg(agent: Agent): string {
 
 /** GET /nft/agent/:agentId/image — SVG identity card */
 router.get('/agent/:agentId/image', (req: Request, res: Response) => {
-  const agent = agentDb.getById(req.params.agentId);
+  const agent = agentDb.getById(req.params.agentId as string);
   if (!agent) return res.status(404).json({ error: 'Agent not found' });
 
   res.setHeader('Content-Type', 'image/svg+xml');
@@ -245,7 +245,7 @@ router.get('/agent/:agentId/image', (req: Request, res: Response) => {
 
 /** GET /nft/agent/:agentId — HIP-412 metadata JSON */
 router.get('/agent/:agentId', (req: Request, res: Response) => {
-  const agent = agentDb.getById(req.params.agentId);
+  const agent = agentDb.getById(req.params.agentId as string);
   if (!agent) return res.status(404).json({ error: 'Agent not found' });
 
   res.json({
