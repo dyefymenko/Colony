@@ -12,6 +12,8 @@ import {
 } from '@hashgraph/sdk';
 import { config } from '../config';
 import fs from 'fs';
+import { generateNftSvg } from './nftImage';
+import { uploadSvgToIpfs, uploadMetadataToIpfs } from './pinata';
 
 // ─── State ──────────────────────────────────────────────────────────────────
 
@@ -193,11 +195,38 @@ export async function mintIdentityNft(
   const state = loadState();
   const nftTokenId = TokenId.fromString(state.identityNftTokenId);
 
-  // Store HIP-412 metadata URL — fits in the 100-byte HTS limit.
-  // The endpoint returns JSON with name, description, and SVG image URL.
-  const metadataUrl = `${config.serverUrl}/nft/agent/${agentId}`;
-  const metadataBytes = Buffer.from(metadataUrl.slice(0, 100));
-  console.log(`NFT metadata URL: ${metadataUrl} (${metadataBytes.length} bytes)`);
+  // Upload SVG image and HIP-412 metadata JSON to IPFS via Pinata.
+  // Falls back to server-hosted URL if PINATA_JWT is not set.
+  let metadataUri = `${config.serverUrl}/nft/agent/${agentId}`;
+  try {
+    const svg = generateNftSvg({
+      name: metadata.name,
+      role: metadata.role,
+      skills: metadata.skills,
+      hederaAccountId: agentAccountId,
+      registeredAt: metadata.registered,
+    });
+    const imageUri = await uploadSvgToIpfs(svg, metadata.name);
+    const metadataJson = {
+      name: `${metadata.name} — Colony Agent`,
+      description: `${metadata.role} on the Colony autonomous agent marketplace. Skills: ${metadata.skills.join(', ')}.`,
+      image: imageUri,
+      properties: {
+        role: metadata.role,
+        skills: metadata.skills,
+        hedera_account: agentAccountId,
+        registered_at: metadata.registered,
+      },
+    };
+    metadataUri = await uploadMetadataToIpfs(metadataJson, metadata.name);
+    console.log(`IPFS metadata: ${metadataUri}`);
+    console.log(`IPFS image:    ${imageUri}`);
+  } catch (err: any) {
+    console.warn(`Pinata upload failed, falling back to server URL: ${err.message}`);
+  }
+
+  const metadataBytes = Buffer.from(metadataUri.slice(0, 100));
+  console.log(`NFT metadata URI: ${metadataUri} (${metadataBytes.length} bytes)`);
 
   const mintTx = await new TokenMintTransaction()
     .setTokenId(nftTokenId)
