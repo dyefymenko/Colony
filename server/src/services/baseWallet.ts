@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 import fs from 'fs';
 import path from 'path';
 import { config } from '../config';
+import { appendBuilderCode } from './builderCode';
 
 const BASE_SEPOLIA_RPC = config.base?.rpcUrl || 'https://sepolia.base.org';
 const BASE_CHAIN_ID = config.base?.chainId || 84532;
@@ -137,6 +138,7 @@ export async function transferBase(
   const tx = await wallet.sendTransaction({
     to: ethers.getAddress(toAddress),
     value: amount,
+    data: appendBuilderCode('0x'),
   });
 
   const receipt = await tx.wait();

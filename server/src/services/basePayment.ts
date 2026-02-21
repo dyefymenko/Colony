@@ -16,6 +16,7 @@ import {
   getBaseBalance,
   baseExplorerTxUrl,
 } from './baseWallet';
+import { appendBuilderCode } from './builderCode';
 
 export interface BaseX402PaymentResult {
   success: boolean;
@@ -168,6 +169,7 @@ export class BasePaymentService {
     const tx = await wallet.sendTransaction({
       to: recipient,
       value: txValue,
+      data: appendBuilderCode('0x'),
     });
 
     const receipt = await tx.wait();
