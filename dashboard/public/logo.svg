@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115">
+  <g fill="#c0392b">
+
+    <!-- Left claw (C-shape opening right toward centre) -->
+    <path d="M33,35.8 A16,16 0 1,1 33,8.2 L29.5,14.2 A9,9 0 1,0 29.5,29.8 Z"/>
+
+    <!-- Right claw (mirror, opening left toward centre) -->
+    <path d="M67,35.8 A16,16 0 1,0 67,8.2 L70.5,14.2 A9,9 0 1,1 70.5,29.8 Z"/>
+
+    <!-- Body -->
+    <circle cx="50" cy="65" r="26"/>
+
+    <!-- Left legs -->
+    <rect x="11" y="51" width="13" height="6" rx="2" transform="rotate(-14 17.5 54)"/>
+    <rect x="10" y="63" width="13" height="6" rx="2"/>
+    <rect x="11" y="75" width="13" height="6" rx="2" transform="rotate(14 17.5 78)"/>
+
+    <!-- Right legs -->
+    <rect x="76" y="51" width="13" height="6" rx="2" transform="rotate(14 82.5 54)"/>
+    <rect x="77" y="63" width="13" height="6" rx="2"/>
+    <rect x="76" y="75" width="13" height="6" rx="2" transform="rotate(-14 82.5 78)"/>
+
+    <!-- Terminal screen (dark) -->
+    <rect x="38" y="57" width="24" height="17" rx="3" fill="#7b1818"/>
+
+    <!-- Colony hex mark inside terminal -->
+    <polygon points="50,60 54.3,62.5 54.3,67.5 50,70 45.7,67.5 45.7,62.5" fill="#c0392b"/>
+
+    <!-- Tail -->
+    <polygon points="40,89 60,89 50,108"/>
+
+  </g>
+</svg>

@@ -71,7 +71,7 @@ router.post('/register', async (req: Request, res: Response) => {
     broadcastEvent({
       agentId,
       agentName: name,
-      action: 'earned_tokens',
+      action: 'registered',
       detail: `${name} registered and received 500 WORK tokens`,
       txHash,
     });

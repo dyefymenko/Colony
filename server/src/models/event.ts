@@ -14,7 +14,8 @@ export interface AgentEvent {
     | 'staked_tokens'
     | 'x402_payment'
     | 'rejected_work'
-    | 'auto_released';
+    | 'auto_released'
+    | 'registered';
   detail: string;
   jobId?: string;
   txHash?: string;
