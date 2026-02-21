@@ -20,7 +20,7 @@ const ERC_MARKER = Buffer.from('80218021802180218021802180218021', 'hex');
 const SCHEMA_CANONICAL = Buffer.from([0x00]);
 
 export function getBuilderCode(): string {
-  return process.env.BASE_BUILDER_CODE || 'colony';
+  return process.env.BASE_BUILDER_CODE || 'bc_pccp36n5';
 }
 
 /**

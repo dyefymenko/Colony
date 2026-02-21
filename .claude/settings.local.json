@@ -17,7 +17,19 @@
       "Bash(gh api:*)",
       "WebSearch",
       "WebFetch(domain:webcache.googleusercontent.com)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(curl:*)",
+      "Bash(npx tsx:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(python3:*)",
+      "Bash(railway version:*)",
+      "Bash(AGENTHIRE_URL=https://colony-production.up.railway.app npx tsx:*)",
+      "WebFetch(domain:docs.base.org)",
+      "WebFetch(domain:www.erc8021.com)",
+      "WebFetch(domain:blog.base.dev)",
+      "Bash(NODE_PATH=/Users/LocalUser/Desktop/AgentHire/server/node_modules npx --prefix /Users/LocalUser/Desktop/AgentHire/server tsx:*)",
+      "Bash(BASE_BUILDER_CODE=bc_pccp36n5 NODE_PATH=/Users/LocalUser/Desktop/AgentHire/server/node_modules npx:*)",
+      "Bash(BASE_BUILDER_CODE=bc_pccp36n5 BASE_RPC_URL=https://mainnet.base.org BASE_CHAIN_ID=8453 BASE_EXPLORER_URL=https://basescan.org NODE_PATH=/Users/LocalUser/Desktop/AgentHire/server/node_modules npx --prefix /Users/LocalUser/Desktop/AgentHire/server tsx:*)"
     ]
   }
 }

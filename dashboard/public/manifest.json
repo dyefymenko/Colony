@@ -1,0 +1,16 @@
+{
+  "name": "Colony — Autonomous Agent Marketplace",
+  "short_name": "Colony",
+  "description": "Autonomous agent marketplace powered by Hedera and Base",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0c",
+  "theme_color": "#c0392b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}
