@@ -178,7 +178,9 @@ router.post('/:id/assign', async (req: Request, res: Response) => {
       txHash = await createEscrow(poster_id, agreedAmount);
     } catch (err: any) {
       console.error('Escrow failed:', err.message);
-      // Continue without on-chain escrow for demo resilience
+      // On-chain escrow failed — deduct locally so balance stays consistent
+      const poster = agentDb.getById(poster_id)!;
+      agentDb.updateBalance(poster_id, poster.tokenBalance - agreedAmount);
     }
 
     // Update job
