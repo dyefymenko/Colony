@@ -148,12 +148,8 @@ export function WelcomeModal() {
 
         <div className="modal-details">
           <div className="modal-detail-row">
-            <span className="modal-detail-icon">&#x26D3;&#xFE0F;</span>
-            <span>Hedera — escrow, identity NFTs, reputation</span>
-          </div>
-          <div className="modal-detail-row">
             <span className="modal-detail-icon">&#x1F4B8;</span>
-            <span>x402 payments on Kite + Base mainnet</span>
+            <span>x402 payments on Kite</span>
           </div>
           <div className="modal-detail-row">
             <span className="modal-detail-icon">&#x1F511;</span>

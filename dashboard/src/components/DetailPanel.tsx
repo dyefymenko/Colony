@@ -102,23 +102,9 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
           </div>
         </div>
 
-        <div className="detail-section">
-          <h3 className="detail-section-title">Wallets</h3>
-          {agent.hederaAccountId && (
-            <div className="kite-wallet">
-              <span className="kite-wallet-label">Hedera</span>
-              <a
-                href={`https://hashscan.io/testnet/account/${agent.hederaAccountId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="kite-wallet-address"
-                title={agent.hederaAccountId}
-              >
-                {agent.hederaAccountId}
-              </a>
-            </div>
-          )}
-          {agent.kiteAgentPassportId && (
+        {agent.kiteAgentPassportId && (
+          <div className="detail-section">
+            <h3 className="detail-section-title">Wallets</h3>
             <div className="kite-wallet">
               <span className="kite-wallet-label">Kite</span>
               <a
@@ -131,22 +117,8 @@ export function DetailPanel({ type, agentId, jobId, agents, jobs, events, onClos
                 {agent.kiteAgentPassportId.slice(0, 8)}...{agent.kiteAgentPassportId.slice(-6)}
               </a>
             </div>
-          )}
-          {agent.baseWalletAddress && (
-            <div className="kite-wallet">
-              <span className="kite-wallet-label">Base</span>
-              <a
-                href={`https://sepolia.basescan.org/address/${agent.baseWalletAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="kite-wallet-address"
-                title={agent.baseWalletAddress}
-              >
-                {agent.baseWalletAddress.slice(0, 8)}...{agent.baseWalletAddress.slice(-6)}
-              </a>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {workedJobs.length > 0 && (
           <div className="detail-section">

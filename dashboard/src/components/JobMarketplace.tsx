@@ -136,6 +136,25 @@ export function JobMarketplace({ jobs, agents, onSelectJob }: { jobs: Job[]; age
                 </a>
               </div>
             )}
+            {(job.status === 'completed' || job.status === 'rejected') &&
+              job.expenses.some((e) => e.kiteTxHash) && (
+              <div className="job-x402-links">
+                {job.expenses.filter((e) => e.kiteTxHash).map((exp, i) => (
+                  <a
+                    key={i}
+                    className="job-x402-link"
+                    href={exp.chain === 'base'
+                      ? `https://basescan.org/tx/${exp.kiteTxHash}`
+                      : `https://testnet.kitescan.ai/tx/${exp.kiteTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    x402: {exp.amount} [{exp.chain === 'base' ? 'BaseScan' : 'KiteScan'} ↗]
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         ))}
         {sorted.length === 0 && <div className="empty">No jobs posted yet</div>}
